@@ -30,7 +30,6 @@ import com.google.common.collect.Iterables;
 import com.google.errorprone.util.ASTHelpers;
 import com.sun.tools.javac.code.Symbol;
 import com.uber.nullaway.fixserialization.FixSerializationConfig;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -292,15 +291,17 @@ public abstract class AbstractConfig implements Config {
     return contractAnnotations.contains(annotationName);
   }
 
-  protected ImmutableSet<MethodClassAndName> getKnownInitializers(Set<String> qualifiedNames) {
-    Set<MethodClassAndName> result = new LinkedHashSet<>();
-    for (String name : qualifiedNames) {
-      int lastDot = name.lastIndexOf('.');
-      String methodName = name.substring(lastDot + 1);
-      String className = name.substring(0, lastDot);
-      result.add(MethodClassAndName.create(className, methodName));
-    }
-    return ImmutableSet.copyOf(result);
+  protected ImmutableSet<MethodClassAndName> getKnownInitializers(
+      ImmutableSet<String> qualifiedNames) {
+    return qualifiedNames.stream()
+        .map(
+            name -> {
+              int lastDot = name.lastIndexOf('.');
+              String methodName = name.substring(lastDot + 1);
+              String className = name.substring(0, lastDot);
+              return MethodClassAndName.create(className, methodName);
+            })
+        .collect(ImmutableSet.toImmutableSet());
   }
 
   @AutoValue
