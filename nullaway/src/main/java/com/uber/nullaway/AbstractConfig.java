@@ -291,24 +291,18 @@ public abstract class AbstractConfig implements Config {
     return contractAnnotations.contains(annotationName);
   }
 
-  protected ImmutableSet<MethodClassAndName> getKnownInitializers(
-      ImmutableSet<String> qualifiedNames) {
-    return qualifiedNames.stream()
-        .map(
-            name -> {
-              int lastDot = name.lastIndexOf('.');
-              String methodName = name.substring(lastDot + 1);
-              String className = name.substring(0, lastDot);
-              return MethodClassAndName.create(className, methodName);
-            })
-        .collect(ImmutableSet.toImmutableSet());
-  }
-
   @AutoValue
   abstract static class MethodClassAndName {
 
     static MethodClassAndName create(String enclosingClass, String methodName) {
       return new AutoValue_AbstractConfig_MethodClassAndName(enclosingClass, methodName);
+    }
+
+    static MethodClassAndName fromClassDotMethod(String classDotMethod) {
+      int lastDot = classDotMethod.lastIndexOf('.');
+      String methodName = classDotMethod.substring(lastDot + 1);
+      String className = classDotMethod.substring(0, lastDot);
+      return MethodClassAndName.create(className, methodName);
     }
 
     abstract String enclosingClass();
