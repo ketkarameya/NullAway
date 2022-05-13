@@ -77,29 +77,25 @@ public abstract class AbstractConfig implements Config {
 
   protected boolean handleTestAssertionLibraries;
 
-  protected Set<String> optionalClassPaths;
+  protected ImmutableSet<String> optionalClassPaths;
 
   protected boolean assertsEnabled;
 
-  /**
-   * if true, {@link #fromAnnotatedPackage(Symbol.ClassSymbol)} will return false for any class
-   * annotated with {@link javax.annotation.Generated}
-   */
   protected boolean treatGeneratedAsUnannotated;
 
   protected boolean acknowledgeAndroidRecent;
 
-  protected Set<MethodClassAndName> knownInitializers;
+  protected ImmutableSet<MethodClassAndName> knownInitializers;
 
-  protected Set<String> excludedClassAnnotations;
+  protected ImmutableSet<String> excludedClassAnnotations;
 
-  protected Set<String> generatedCodeAnnotations;
+  protected ImmutableSet<String> generatedCodeAnnotations;
 
-  protected Set<String> initializerAnnotations;
+  protected ImmutableSet<String> initializerAnnotations;
 
-  protected Set<String> externalInitAnnotations;
+  protected ImmutableSet<String> externalInitAnnotations;
 
-  protected Set<String> contractAnnotations;
+  protected ImmutableSet<String> contractAnnotations;
 
   @Nullable protected String castToNonNullMethod;
 
@@ -193,12 +189,12 @@ public abstract class AbstractConfig implements Config {
 
   @Override
   public ImmutableSet<String> getExcludedClassAnnotations() {
-    return ImmutableSet.copyOf(excludedClassAnnotations);
+    return excludedClassAnnotations;
   }
 
   @Override
   public ImmutableSet<String> getGeneratedCodeAnnotations() {
-    return ImmutableSet.copyOf(generatedCodeAnnotations);
+    return generatedCodeAnnotations;
   }
 
   @Override
@@ -262,7 +258,7 @@ public abstract class AbstractConfig implements Config {
   }
 
   @Override
-  public Set<String> getOptionalClassPaths() {
+  public ImmutableSet<String> getOptionalClassPaths() {
     return optionalClassPaths;
   }
 
@@ -296,7 +292,7 @@ public abstract class AbstractConfig implements Config {
     return contractAnnotations.contains(annotationName);
   }
 
-  protected Set<MethodClassAndName> getKnownInitializers(Set<String> qualifiedNames) {
+  protected ImmutableSet<MethodClassAndName> getKnownInitializers(Set<String> qualifiedNames) {
     Set<MethodClassAndName> result = new LinkedHashSet<>();
     for (String name : qualifiedNames) {
       int lastDot = name.lastIndexOf('.');
@@ -304,7 +300,7 @@ public abstract class AbstractConfig implements Config {
       String className = name.substring(0, lastDot);
       result.add(MethodClassAndName.create(className, methodName));
     }
-    return result;
+    return ImmutableSet.copyOf(result);
   }
 
   @AutoValue
